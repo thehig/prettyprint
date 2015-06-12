@@ -1,0 +1,23 @@
+{
+  "name": "prettyprint",
+  "version": "0.0.0",
+  "description": "Print a folder of source code to a single HTML page for printing and annotating in OneNote",
+  "main": "app/index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --require coffee-script/register --compilers coffee:coffee-script/register --bail"
+  },
+  "author": "David Higgins <thehig@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "highlight.js": "^8.6.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/-----"
+  },
+  "devDependencies": {
+    "chai": "^3.0.0",
+    "coffee-script": "^1.9.3",
+    "mocha": "^2.2.5"
+  }
+}
