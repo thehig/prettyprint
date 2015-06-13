@@ -12,7 +12,11 @@
 			"folder_exclude_patterns": ["node_modules"],
 		}, {
 			"path": "test",
-			"file_include_patterns": ["*.coffee"]
+			"file_include_patterns": ["*.coffee"],
+			"folder_exclude_patterns": ["fixtures"]
+		}, {
+			"path": "./test/fixtures",
+			"file_include_patterns": ["*.*"]
 		}, 
 	]
 
