@@ -50,3 +50,13 @@ describe "highlighting the files", ->
 		it "should throw an error if any relativepath is missing", -> expect( -> highlight([dummyobject, {filename: "aaa", absolutepath: "bbb"}, dummyobject, dummyobject]) ).to.throw(/missing: relativepath/)
 		it "should throw an error if any content is missing", -> expect( -> highlight([dummyobject, {filename: "aaa", absolutepath: "bbb", relativepath: "ccc"}, dummyobject, dummyobject]) ).to.throw(/missing: content/)
 
+	describe "highlight content", ->
+		it "should return a promise", ->
+			prm = highlight([exampleFileContents.files[1]])
+			expect(prm).to.have.property('then')
+			expect(prm).to.have.property('done')
+
+		it "should highlight the content", (done)->
+			highlight([exampleFileContents.files[1]]).done (data)->
+				expect(data[0].highlight).to.have.property('value', '<span class="hljs-list">(<span class="hljs-keyword">function</span><span class="hljs-list">()</span><span class="hljs-collection">{}</span>)</span><span class="hljs-list">()</span><span class="hljs-comment">;</span>')
+				done()

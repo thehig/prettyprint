@@ -129,14 +129,37 @@ prettyprint = {
 		if(!Array.isArray(filelist)) throw new Error('Invalid parameter: filelist not an array');
 		if(filelist.length === 0) throw new Error('Invalid parameter: filelist is empty array');
 
+		var highlightPromises = [];
 		_.each(filelist, function(item){
-			if(!_.has(item, 'filename')) throw new Error('File parameter missing: filename');
+			if(!item.filename) throw new Error('File parameter missing: filename');
 			if(!item.relativepath) throw new Error('File parameter missing: relativepath');
 			if(!item.absolutepath) throw new Error('File parameter missing: absolutepath');
 			if(!item.content) throw new Error('File parameter missing: content');
+
+			highlightPromises.push(new promise(function(success, error){
+				item.highlight = hljs.highlightAuto(item.content);
+				success(item);
+			}));
 		});
 
-	}
+		return promise.all(highlightPromises);
+	}, //highlight
+	output: function(filelist){
+		log = prettyprint.utilities.log;
+
+		if(!filelist) throw new Error('Required parameter: filelist');
+		if(!Array.isArray(filelist)) throw new Error('Invalid parameter: filelist not an array');
+		if(filelist.length === 0) throw new Error('Invalid parameter: filelist is empty array');
+
+		_.each(filelist, function(item){
+			if(!item.filename) throw new Error('File parameter missing: filename');
+			if(!item.relativepath) throw new Error('File parameter missing: relativepath');
+			if(!item.absolutepath) throw new Error('File parameter missing: absolutepath');
+			if(!item.content) throw new Error('File parameter missing: content');
+			if(!item.highlight) throw new Error('File parameter missing: highlight');
+
+		});
+	} //output
 };
 
 module.exports = prettyprint;
