@@ -1,5 +1,4 @@
 prettyprint = require('../app/prettyprint')
-scan = prettyprint.scan
 load = prettyprint.load
 
 mocha = require('mocha')
@@ -34,7 +33,7 @@ exampleFileList = {
 
 dummyobject = {filename: 'aaa', relativepath: 'bbb', absolutepath: 'ccc'};
 
-describe.only "loading the files", ->
+describe "loading the files", ->
 	describe "parameters", ->
 		it "should throw an error if no parameter provided", -> expect( -> load() ).to.throw(/Required parameter/)
 		it "should throw an error if an empty parameter is provided", -> expect( -> load([]) ).to.throw(/empty array/)
