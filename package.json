@@ -9,6 +9,7 @@
   "author": "David Higgins <thehig@gmail.com>",
   "license": "ISC",
   "dependencies": {
+    "chai-as-promised": "^5.1.0",
     "highlight.js": "^8.6.0",
     "promise": "^7.0.1",
     "underscore": "^1.8.3",
