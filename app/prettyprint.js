@@ -9,12 +9,12 @@ prettyprint = {
 	utilities: {
 
 		endsWith: function(str, suffix) {
-    		return str.indexOf(suffix, str.length - suffix.length) !== -1;
-    	},
-    	debug: false,
-    	log: function(string){
-    		if(prettyprint.utilities.debug) console.log(string);
-    	}
+			return str.indexOf(suffix, str.length - suffix.length) !== -1;
+		},
+		debug: false,
+		log: function(string){
+			if(prettyprint.utilities.debug) console.log(string);
+		}
 	}, //utilities
 
 	scan: function(options){
@@ -86,8 +86,8 @@ prettyprint = {
 					// given no patterns, just get all the files
 					pushfile(root, stat);
 				}
-			    
-			    next();
+				
+				next();
 			});
 
 			walker.on('end', function() {
