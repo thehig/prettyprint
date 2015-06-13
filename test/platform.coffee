@@ -58,13 +58,16 @@ describe "gathering files", ->
 			done()
 	it.skip "should retain a filename relative to the starting path", -> nope()
 
-describe "each file", ->
-	it "should have a filename", (done)-> 
-		prettyprint.scan({directory: './test/fixtures/countfiles/fivefiles/four'}).done (result)-> 
-			expect(result.files[0]).to.have.property('filename', '2.js')
+describe.only "each file", ->
+	source = undefined;
+
+	beforeEach (done)->
+		prettyprint.scan({directory: './test/fixtures/countfiles/fivefiles/four'}).done (result)->
+			source = result
 			done()
-	it "should have the relative folder URI", (done)-> nope()
-	it "should have the absolute folder URI", (done)-> nope()
+	it "should have a filename", -> expect(source.files[0]).to.have.property('filename', '2.js')
+	it "should have the relative folder URI", -> expect(source.files[0]).to.have.property('relativepath', './test/fixtures/countfiles/fivefiles/four')
+	it "should have the absolute folder URI", -> expect(source.files[0]).to.have.property('absolutepath', process.cwd() + '/test/fixtures/countfiles/fivefiles/four')
 
 describe.skip "preparing output", ->
 	it "should create a html output file", -> nope()

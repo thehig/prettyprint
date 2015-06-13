@@ -25,7 +25,18 @@ module.exports = {
 
 		return new P(function(success, error){
 			var files = [],
-				walker = walk.walk(workingdirectory, { followLinks: false });
+				walker = walk.walk(workingdirectory, { followLinks: false }),
+				pushfile = function(root, stat){
+					console.log("root: " + JSON.stringify(root));
+					console.log("stat: " + JSON.stringify(stat));
+
+					files.push({
+						filename: stat.name,
+						relativepath: root,
+						absolutepath: ""
+					});
+				}
+
 
 			walker.on('file', function(root, stat, next) {
 
@@ -35,18 +46,14 @@ module.exports = {
 					for(var i = 0; i < options.patterns.length; i++)
 					{
 						if(endsWith(stat.name.toLowerCase(), options.patterns[i].toLowerCase())){
-							files.push({
-								filename: stat.name
-							});
+							pushfile(root, stat);
 							break;
 						}
 					}
 					
 				}else{
 					// given no patterns, just get all the files
-					files.push({
-						filename: stat.name
-					});
+					pushfile(root, stat);
 				}
 			    
 			    next();
