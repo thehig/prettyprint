@@ -14,49 +14,6 @@ describe "the mocha and chai testing frameworks", ->
 
 describe "uncategorised", ->
 
-	describe "gathering files", ->
-		it "should count the number of files in a folder", (done)-> 
-			prettyprint.scan({directory: './test/fixtures/countfiles/fivefiles/four'}).done (result)-> 
-				expect(result.files).to.have.length(4)
-				done()
-		it "should count .. recursively", (done)-> 
-			prettyprint.scan({directory: './test/fixtures/countfiles/fivefiles/'}).done (result)-> 
-				expect(result.files).to.have.length(5)
-				done()
-		it "should count .. recursively that match a pattern", (done)-> 
-			prettyprint.scan({
-				directory: './test/fixtures/countfiles/fivefiles/',
-				patterns: ['js']
-			}).done (result)-> 
-				expect(result.files).to.have.length(3)
-				done()
-		it "should count .. recursively that match one of multple patterns", (done)->
-			prettyprint.scan({
-				directory: './test/fixtures/countfiles/fivefiles/',
-				patterns: ['js', 'css']
-			}).done (result)-> 
-				expect(result.files).to.have.length(4)
-				done()
-		it "should not matter if the pattern is upper or lower case", (done)->
-			prettyprint.scan({
-				directory: './test/fixtures/countfiles/fivefiles/',
-				patterns: ['JS', 'CsS']
-			}).done (result)-> 
-				expect(result.files).to.have.length(4)
-				done()
-		it.skip "should retain a filename relative to the starting path", -> nope()
-
-	describe "each file", ->
-		data = undefined;
-
-		beforeEach (done)->
-			prettyprint.scan({directory: './test/fixtures/countfiles/fivefiles/four'}).done (result)->
-				data = result
-				done()
-		it "should have a filename", -> expect(data.files[0]).to.have.property('filename', '2.js')
-		it "should have the relative folder URI", -> expect(data.files[0]).to.have.property('relativepath', './test/fixtures/countfiles/fivefiles/four')
-		it "should have the absolute folder URI", -> expect(data.files[0]).to.have.property('absolutepath', process.cwd() + '/test/fixtures/countfiles/fivefiles/four')
-
 	describe.skip "preparing output", ->
 		it "should create a html output file", -> nope()
 		it "should create a html output file with a new name if it already exists", -> nope()

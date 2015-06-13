@@ -2,9 +2,12 @@ var hljs = require('highlight.js');
 var promise = require('promise');
 var walk = require('walk');
 var _ = require('underscore');
+var fs = require('fs');
+var read = promise.denodeify(fs.readFile);
 
 prettyprint = {
 	utilities: {
+
 		endsWith: function(str, suffix) {
     		return str.indexOf(suffix, str.length - suffix.length) !== -1;
     	},
@@ -12,7 +15,7 @@ prettyprint = {
     	log: function(string){
     		if(prettyprint.utilities.debug) console.log(string);
     	}
-	},
+	}, //utilities
 
 	scan: function(options){
 		endsWith = prettyprint.utilities.endsWith;
@@ -25,7 +28,8 @@ prettyprint = {
 		var cwd = process.cwd();
 
 		if(options.directory.indexOf(cwd) > -1){
-			absolutedirectory = options.directory;
+			absolutedirectory = options.directory.replace(/\\/g, "/");
+			// strip the CWD and add a .
 			workingdirectory = '.' + absolutedirectory.substr(cwd.length, absolutedirectory.length).replace(/\\/g, "/");
 		}
 		else
@@ -39,19 +43,28 @@ prettyprint = {
 				if(workingdirectory[0] !== '/') workingdirectory = '/' + workingdirectory;
 				workingdirectory = '.' + workingdirectory;
 			}
+
+			absolutedirectory = cwd + workingdirectory.substring(1, workingdirectory.length);
 		}
-		
+
+		if(endsWith(workingdirectory, '/')) workingdirectory = workingdirectory.substring(0, workingdirectory.length - 1);
+
 		return new promise(function(success, error){
 			var files = [],
 				walker = walk.walk(workingdirectory, { followLinks: false }),
 				pushfile = function(root, stat){
-					log("root: " + JSON.stringify(root));
-					log("stat: " + JSON.stringify(stat));
+					// log("root: " + JSON.stringify(root));
+					// log("stat: " + JSON.stringify(stat));
+
+					folder = root.replace(/\\/g, "/") + "/";
+					abs = cwd.replace(/\\/g, "/") + folder.substring(1, folder.length);
+
+					log("abs: " + abs);
 
 					files.push({
 						filename: stat.name,
-						relativepath: root,
-						absolutepath: ""
+						relativepath: folder,
+						absolutepath: abs
 					});
 				};
 
@@ -86,7 +99,29 @@ prettyprint = {
 			});
 
 		});
-	}
+	}, //scan
+	load: function (filelist){
+		log = prettyprint.utilities.log;
+
+		if(!filelist) throw new Error('Required parameter: filelist');
+		if(!Array.isArray(filelist)) throw new Error('Invalid parameter: filelist not an array');
+		if(filelist.length === 0) throw new Error('Invalid parameter: filelist is empty array');
+
+		var readPromises = [];
+		_.each(filelist, function(item){
+			if(!item.filename) throw new Error('File parameter missing: filename');
+			if(!item.relativepath) throw new Error('File parameter missing: relativepath');
+			if(!item.absolutepath) throw new Error('File parameter missing: absolutepath');
+
+			readPromises.push(read(item.relativepath + item.filename, "utf-8").then(function(str){
+				// log(str);
+				item.content = str;
+				return item;
+			}));
+		});
+
+		return promise.all(readPromises);
+	} //load
 };
 
 module.exports = prettyprint;
