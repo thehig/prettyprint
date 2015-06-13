@@ -24,8 +24,8 @@ describe "scan parameters", ->
 		it "should count the number of files in a folder", -> expect(scan({directory: './test/fixtures/countfiles/fivefiles/four'})).to.eventually.have.property('files').with.length(4)
 		it "should count .. recursively", -> expect(scan({directory: relativeuri})).to.eventually.have.property('files').with.length(5)
 		it "should count .. recursively that match a pattern", -> expect(scan({directory: absuri, patterns: ['js']})).to.eventually.have.property('files').with.length(3)
-		it "should count .. recursively that match one of multple patterns", ->expect(scan({directory: relativeuri, patterns: ['js', 'css']})).to.eventually.have.property('files').with.length(4)
-		it "should not matter if the pattern is upper or lower case", ->expect(scan({directory: absuri, patterns: ['JS', 'CsS']})).to.eventually.have.property('files').with.length(4)
+		it "should count .. recursively that match one of multple patterns", -> expect(scan({directory: relativeuri, patterns: ['js', 'css']})).to.eventually.have.property('files').with.length(4)
+		it "should not matter if the pattern is upper or lower case", -> expect(scan({directory: absuri, patterns: ['JS', 'CsS']})).to.eventually.have.property('files').with.length(4)
 		it.skip "should retain a filename relative to the starting path", -> expect.fail()
 
 	describe.skip "other parameters", ->

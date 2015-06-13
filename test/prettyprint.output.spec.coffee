@@ -8,7 +8,7 @@ expect = chai.expect
 
 dummyobject = {filename: 'aaa', relativepath: 'bbb', absolutepath: 'ccc', content: 'ddd', highlight: 'eee'};
 
-describe.only "outputting to html", ->
+describe "outputting to html", ->
 	describe "parameters", ->
 		it "should throw an error if no parameter provided", -> expect( -> output() ).to.throw(/Required parameter/)
 		it "should throw an error if an empty parameter is provided", -> expect( -> output([]) ).to.throw(/empty array/)

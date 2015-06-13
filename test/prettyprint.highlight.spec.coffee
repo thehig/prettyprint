@@ -36,27 +36,29 @@ exampleFileContents = {
 	}]
 }
 
-dummyobject = {filename: 'aaa', relativepath: 'bbb', absolutepath: 'ccc', content: 'ddd'};
+dummyobject = {filename: 'aaa', relativepath: 'bbb', absolutepath: 'ccc', content: 'ddd', content: 'eee'};
 
 
 describe "highlighting the files", ->
 	describe "parameters", ->
-		it "should throw an error if no parameter provided", -> expect( -> highlight() ).to.throw(/Required parameter/)
-		it "should throw an error if an empty parameter is provided", -> expect( -> highlight([]) ).to.throw(/empty array/)
-		it "should throw an error if an invalid parameter is provided", -> expect( -> highlight("something") ).to.throw(/not an array/)
-		it "should throw an error if the filename is missing", -> expect( -> highlight([{}]) ).to.throw(/missing: filename/)
-		it "should throw an error if any filename is missing", -> expect( -> highlight([dummyobject, {absolutepath: "bbb", relativepath: "ccc"}]) ).to.throw(/missing: filename/)
-		it "should throw an error if any absolutepath is missing", -> expect( -> highlight([{filename: "aaa", relativepath: "ccc"}]) ).to.throw(/missing: absolutepath/)
-		it "should throw an error if any relativepath is missing", -> expect( -> highlight([dummyobject, {filename: "aaa", absolutepath: "bbb"}, dummyobject, dummyobject]) ).to.throw(/missing: relativepath/)
-		it "should throw an error if any content is missing", -> expect( -> highlight([dummyobject, {filename: "aaa", absolutepath: "bbb", relativepath: "ccc"}, dummyobject, dummyobject]) ).to.throw(/missing: content/)
+		it "should throw an error given no parameter", -> expect(-> highlight()).to.throw(/Required parameter/)
+		it "should throw an error given no directory parameter", -> expect(-> highlight({})).to.throw(/Missing parameter: workingdirectory/)
+		it "should throw an error given no files parameter", -> expect(-> highlight({workingdirectory: "aaa"})).to.throw(/Missing parameter: files/)
+		it "should throw an error given empty files array", -> expect(-> highlight({workingdirectory: "aaa", files: []})).to.throw(/Invalid parameter: files is empty/)
+		it "should throw an error given non-array files", -> expect(-> highlight({workingdirectory: "aaa", files: {}})).to.throw(/Invalid parameter: files is not an array/)
+
+		it "should throw an error if any filename is missing", -> expect(-> highlight({workingdirectory: "aaa", files: [dummyobject, {absolutepath: "bbb", relativepath: "ccc"}]})).to.throw(/missing: filename/)
+		it "should throw an error if any absolutepath is missing", -> expect(-> highlight({workingdirectory: "aaa", files: [{filename: "aaa", relativepath: "ccc"}]})).to.throw(/missing: absolutepath/)
+		it "should throw an error if any relativepath is missing", -> expect(-> highlight({workingdirectory: "aaa", files: [dummyobject, {filename: "aaa", absolutepath: "bbb"}, dummyobject, dummyobject]})).to.throw(/missing: relativepath/)
+		it "should throw an error if any content is missing", -> expect( -> highlight({workingdirectory: "aaa", files: [dummyobject, {filename: "aaa", absolutepath: "bbb", relativepath: "ccc"}, dummyobject, dummyobject]})).to.throw(/missing: content/)
 
 	describe "highlight content", ->
 		it "should return a promise", ->
-			prm = highlight([exampleFileContents.files[1]])
+			prm = highlight({workingdirectory: "aaa", files: [exampleFileContents.files[1]]})
 			expect(prm).to.have.property('then')
 			expect(prm).to.have.property('done')
 
 		it "should highlight the content", (done)->
-			highlight([exampleFileContents.files[1]]).done (data)->
-				expect(data[0].highlight).to.have.property('value', '<span class="hljs-list">(<span class="hljs-keyword">function</span><span class="hljs-list">()</span><span class="hljs-collection">{}</span>)</span><span class="hljs-list">()</span><span class="hljs-comment">;</span>')
+			highlight({workingdirectory: "aaa", files: [exampleFileContents.files[1]]}).done (data)->
+				expect(data.files[0].highlight).to.have.property('value', '<span class="hljs-list">(<span class="hljs-keyword">function</span><span class="hljs-list">()</span><span class="hljs-collection">{}</span>)</span><span class="hljs-list">()</span><span class="hljs-comment">;</span>')
 				done()

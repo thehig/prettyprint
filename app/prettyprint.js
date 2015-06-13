@@ -94,18 +94,22 @@ prettyprint = {
 				// when the walker is done walking the structure, we call our promise success callback
 				success({
 					workingdirectory: workingdirectory,
+					absolutedirectory: absolutedirectory,
 					files: files
 				});
 			});
 
 		});
 	}, //scan
-	load: function (filelist){
+	load: function (options){
 		log = prettyprint.utilities.log;
-
-		if(!filelist) throw new Error('Required parameter: filelist');
-		if(!Array.isArray(filelist)) throw new Error('Invalid parameter: filelist not an array');
-		if(filelist.length === 0) throw new Error('Invalid parameter: filelist is empty array');
+		if(!options) throw new Error('Required parameter');
+		if(!options.workingdirectory) throw new Error('Missing parameter: workingdirectory');
+		var filelist = options.files;
+		
+		if(!filelist) throw new Error('Missing parameter: files');
+		if(!Array.isArray(filelist)) throw new Error('Invalid parameter: files is not an array');
+		if(filelist.length === 0) throw new Error('Invalid parameter: files is empty array');
 
 		var readPromises = [];
 		_.each(filelist, function(item){
@@ -114,20 +118,29 @@ prettyprint = {
 			if(!item.absolutepath) throw new Error('File parameter missing: absolutepath');
 
 			readPromises.push(read(item.relativepath + item.filename, "utf-8").then(function(str){
-				// log(str);
 				item.content = str;
 				return item;
 			}));
 		});
 
-		return promise.all(readPromises);
+		return promise.all(readPromises).then(function (filelist){
+			return {
+				workingdirectory: options.workingdirectory,
+				absolutedirectory: options.absolutedirectory,
+				files: filelist
+			}
+		});
 	}, //load
-	highlight: function(filelist){
+	highlight: function(options){
 		log = prettyprint.utilities.log;
+		if(!options) throw new Error('Required parameter: options');
+		if(!options.workingdirectory) throw new Error('Missing parameter: workingdirectory');
 
-		if(!filelist) throw new Error('Required parameter: filelist');
-		if(!Array.isArray(filelist)) throw new Error('Invalid parameter: filelist not an array');
-		if(filelist.length === 0) throw new Error('Invalid parameter: filelist is empty array');
+		var filelist = options.files;
+
+		if(!filelist) throw new Error('Missing parameter: files');
+		if(!Array.isArray(filelist)) throw new Error('Invalid parameter: files is not an array');
+		if(filelist.length === 0) throw new Error('Invalid parameter: files is empty array');
 
 		var highlightPromises = [];
 		_.each(filelist, function(item){
@@ -138,11 +151,18 @@ prettyprint = {
 
 			highlightPromises.push(new promise(function(success, error){
 				item.highlight = hljs.highlightAuto(item.content);
+				item.output = hljs.fixMarkup(item.highlight.value);
 				success(item);
 			}));
 		});
 
-		return promise.all(highlightPromises);
+		return promise.all(highlightPromises).then(function (filelist){
+			return {
+				workingdirectory: options.workingdirectory,
+				absolutedirectory: options.absolutedirectory,
+				files: filelist
+			}
+		});
 	}, //highlight
 	output: function(filelist){
 		log = prettyprint.utilities.log;
