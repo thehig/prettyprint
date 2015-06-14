@@ -61,7 +61,7 @@ describe "loading the files", ->
 				expect(data.files[1]).to.have.property('content', '(function(){})();')
 				done()
 
-		it.only "should have multiple lines in 5.js", (done)->
-			load({workingdirectory: "aaa", files:[exampleFileList.files[4]]}).done (data) ->
-				expect(data.files[0]).to.have.property('content', 'body { background-color: #b0c4de; }')
+		it "should have multiple lines in 5.js", (done)->
+			load({workingdirectory: "aaa", files:exampleFileList.files}).done (data) ->
+				expect(data.files[4]).to.have.property('content', '(function(){\r\n\treturn "hello world";\r\n})();')
 				done()
